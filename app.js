@@ -3,12 +3,14 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-
+const io = require('socket.io');
+const headerPrinter = require('./headerPrinter')
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-
+const { Socket } = require('dgram');
 const app = express();
 
+app.io = io;
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -25,6 +27,23 @@ app.use('/users', usersRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
+});
+
+io.use((socket, next)=>{
+  const token = socket.handshake.query.token;
+  console.log(`token is ${token}`);
+  if(token !== 'wonmoLee'){
+    next(new Error('Unauthorized'));
+  }
+  next();
+});
+io.on('connection', (socket)=>{
+  socket.on('hello', (message)=>{
+    console.log(message);
+  });
+  socket.on('disconnect', (err)=>{
+    console.log(err);
+  });
 });
 
 // error handler

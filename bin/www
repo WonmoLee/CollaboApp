@@ -21,6 +21,9 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
+app.options.attach(server);
+app.options.set('transports', ['websocket']);
+
 /**
  * Listen on provided port, on all network interfaces.
  */
