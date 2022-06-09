@@ -1,6 +1,8 @@
-var express = require('express');
-var router = express.Router();
-
+const express = require('express');
+const router = express.Router();
+const UserModel = require('../model/User');
+const bcryptjs = require('bcryptjs');
+const jsonwebtoken = require('jsonwebtoken');
 router.post('/login', (req, res, next)=>{
   const {id, password} = req.body;
   if(id !== 'wonmoLee') {
@@ -32,15 +34,40 @@ router.post('/', (req, res,next)=>{
     error.status = 400;
     return next(error);
   }
-  const User = {
-    id: id,
-    password: password
+  
+  const generateStrictPassword = (salt)=>{
+    return bcryptjs.hash(password, salt);
   };
-  req.CreateUser = User;
-  next();
+  const createUser = (strictPassword)=>{
+    const User = new UserModel({
+      id: id,
+      password: strictPassword
+    });
+    req.CreatedUser = User;
+    next();
+  }
+  const OnError = (error)=>{
+    return next(error);
+  }
+  bcryptjs.genSalt(13)
+    .then(generateStrictPassword)
+    .then(createUser)
+    .catch(OnError)
+  
 })
 router.post('/', (req, res, next)=>{
-  res.json(req.CreateUser);
+  const OnError = (error)=>{
+    return next(error);
+  }
+  req.CreatedUser.save()
+    .then((user)=>{
+      req.CreatedUser = user;
+      return next();
+    })
+    .catch(OnError)
+});
+router.post('/', (req, res, next)=>{
+  res.json(req.CreatedUser);
 });
 
 module.exports = router;
