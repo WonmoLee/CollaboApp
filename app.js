@@ -7,9 +7,11 @@ const io = require('socket.io')();
 const headerPrinter = require('./headerPrinter');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const { Socket } = require('dgram');
+//const { Socket } = require('dgram');
+const mongoose = require('mongoose');
+const Initializer = require('./init/initializer');
 const app = express();
-
+Initializer.InitMongoDB(process.env, mongoose);
 app.io = io;
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
