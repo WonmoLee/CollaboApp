@@ -40,13 +40,42 @@ router.post('/login', (req, res, next)=>{
     error.status = 401;
     return next(error);
   };
-  UserModel.findOne({id: id})
+  UserModel.findOne({id: id}).select({id: 1, password : 1, CreatedAt: 1})
     .then(comparePassword)
     .then(compareResultResponse)
     .catch(OnError);
 });
 router.post('/login', (req, res, next)=>{
-  res.json(req.SearchUser);
+  const options = {
+    algorithm: "HS256",
+    expiresIn: "10000",
+    issuer: "http://127.0.0.1"
+  };
+  const cert = "secret";
+  const plainObject = req.SearchUser.toObject({getters: true});
+  jsonwebtoken.sign(plainObject, cert, options, (err,token)=>{
+    if(err) {
+      return next(err);
+    }
+    req.CreatedToken = token;
+    return next();
+  });
+});
+router.post('/login', (req, res, next)=>{
+  const OnError = (error)=>{
+    return next(error);
+  };
+  const updateResultResponse = (updatedUser)=>{
+    req.SearchUser = updatedUser;
+    return next();
+  };
+  req.SearchUser.set({token: req.CreatedToken});
+  req.SearchUser.save()
+    .then(updateResultResponse)
+    .catch(OnError)
+});
+router.post('/login', (req, res, next)=>{
+  res.json({token: req.CreatedToken});
 });
 // 로그인 E
 
