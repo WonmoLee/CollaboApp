@@ -3,26 +3,54 @@ const router = express.Router();
 const UserModel = require('../model/User');
 const bcryptjs = require('bcryptjs');
 const jsonwebtoken = require('jsonwebtoken');
+
+// 로그인 S
 router.post('/login', (req, res, next)=>{
   const {id, password} = req.body;
-  if(id !== 'wonmoLee') {
-    const error = new Error("User Not Found");
-    error.status = 404;
+  if(!id) {
+    const error = new Error("Bad request");
+    error.status = 400;
     return next(error);
-  } else if(password !== '1234') {
-    const error = new Error("User Not Found");
-    error.status = 401;
+  } else if(!password) {
+    const error = new Error("Bad request");
+    error.status = 400;
     return next(error);
   }
-  next();
-}, (req, res, next)=>{
-  res.json({message: "LoggedIn Success"});
+  return next();
 });
-
 router.post('/login', (req, res, next)=>{
-  res.json({message: "LoggedIn Success"});
+  const {id, password} = req.body;
+  const OnError = (error)=>{
+    return next(error);
+  };
+  const comparePassword = (user)=>{
+    if(!user) {
+      const error = new Error('User Not Found');
+      error.status = 404;
+      return next(error);
+    }
+    req.SearchUser = user;
+    return bcryptjs.compare(password, user.password);
+  }
+  const compareResultResponse = (isValid)=>{
+    if(isValid) {
+      return next();
+    };
+    const error = new Error('Invalid password');
+    error.status = 401;
+    return next(error);
+  };
+  UserModel.findOne({id: id})
+    .then(comparePassword)
+    .then(compareResultResponse)
+    .catch(OnError);
 });
+router.post('/login', (req, res, next)=>{
+  res.json(req.SearchUser);
+});
+// 로그인 E
 
+// 회원가입 S
 router.post('/', (req, res,next)=>{
   const {id, password} = req.body;
   if(!id) {
@@ -34,7 +62,7 @@ router.post('/', (req, res,next)=>{
     error.status = 400;
     return next(error);
   }
-  
+
   const generateStrictPassword = (salt)=>{
     return bcryptjs.hash(password, salt);
   };
@@ -48,7 +76,7 @@ router.post('/', (req, res,next)=>{
   }
   const OnError = (error)=>{
     return next(error);
-  }
+  };
   bcryptjs.genSalt(13)
     .then(generateStrictPassword)
     .then(createUser)
@@ -58,7 +86,7 @@ router.post('/', (req, res,next)=>{
 router.post('/', (req, res, next)=>{
   const OnError = (error)=>{
     return next(error);
-  }
+  };
   req.CreatedUser.save()
     .then((user)=>{
       req.CreatedUser = user;
@@ -69,5 +97,6 @@ router.post('/', (req, res, next)=>{
 router.post('/', (req, res, next)=>{
   res.json(req.CreatedUser);
 });
+// 회원가입 E
 
 module.exports = router;
