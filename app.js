@@ -10,6 +10,8 @@ const usersRouter = require('./routes/users');
 //const { Socket } = require('dgram');
 const mongoose = require('mongoose');
 const Initializer = require('./init/initializer');
+const User = require('./model/User');
+const jsonwebtoken = require('jsonwebtoken');
 const app = express();
 Initializer.InitMongoDB(process.env, mongoose);
 app.io = io;
@@ -34,11 +36,26 @@ app.use(function(req, res, next) {
 
 io.use((socket, next)=>{
   const token = socket.handshake.query.token;
+  const cert = "secret";
   console.log(`token is ${token}`);
-  if(token !== 'wonmoLee'){
-    return next(new Error('Unauthorized'));
-  }
-  next();
+  jsonwebtoken.verify(token, cert, (err, decodedUser)=>{
+    if(err) {
+      err.name === 'TokenExpiredError' ? next(new Error('TokenRefresh')) : next(new Error('Unauthorized'));
+      return;
+    }
+    User.findOne({id: decodedUser.id})
+      .then((user)=>{
+        if(!user) {
+          return next(new Error('Unauthorized'));
+        }
+        user.token === token ? next() : next(new Error('Unauthorized'));
+        return;
+      })
+      .catch((error)=>{
+        return next(new Error('Unauthorized'));
+      })
+    next();
+  })
 });
 io.on('connection', (socket)=>{
   socket.on('hello', (message)=>{
