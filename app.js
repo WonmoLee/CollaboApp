@@ -55,7 +55,7 @@ io.use((socket, next)=>{
         return next(new Error('Unauthorized'));
       })
     next();
-  })
+  });
 });
 io.on('connection', (socket)=>{
   socket.on('hello', (message)=>{
