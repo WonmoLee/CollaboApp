@@ -53,6 +53,8 @@ io.on('connection', (socket)=>{
   SocketRoutes.acceptFriendShipRequest(socket, SocketRoutes.event.acceptFriendShipRequest);
   SocketRoutes.denyFriendShipRequset(socket, SocketRoutes.event.denyFriendShipRequset);
   SocketRoutes.removeFriendShipRequest(socket, SocketRoutes.event.removeFriendShipRequest);
+  SocketRoutes.messageSend(io, socket, SocketRoutes.event.messageSend);
+  SocketRoutes.messageLoad(socket, SocketRoutes.event.messageLoad);
 });
 
 // error handler

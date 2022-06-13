@@ -23,3 +23,5 @@ exports.requestFriendShipUser = require('./requestFriendShipUser');
 exports.acceptFriendShipRequest = require('./acceptFriendShipRequest');
 exports.denyFriendShipRequset = require('./denyFriendShipRequset');
 exports.removeFriendShipRequest = require('./removeFriendShipRequest');
+exports.messageSend = require('./messageSend');
+exports.messageLoad = require('./messageLoad');
