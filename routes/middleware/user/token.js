@@ -34,8 +34,8 @@ exports.verfyToken = (req, res, next)=>{
             return next();
           } else {
             return next(new Error('Unauthorized'));
-          }
-        }
+          };
+        };
         res.json({token: token});
     });
 };

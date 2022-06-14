@@ -8,10 +8,11 @@
  * 
  */
 
-exports.createUser = (req, res,next)=>{
+exports.createUser = (req, res, next)=>{
     const UserModel = require('../../../model/User');
-    const bcrypt = require('bcryptjs');
+    const bcryptjs = require('bcryptjs');
     const {id, password} = req.body;
+
     if(!id) {
       const error = new Error("Bad Request");
       error.status = 400;
@@ -39,7 +40,7 @@ exports.createUser = (req, res,next)=>{
     bcryptjs.genSalt(13)
       .then(generateStrictPassword)
       .then(createUser)
-      .catch(OnError)
+      .catch(OnError);
 };
 
 exports.saveUser = (req, res, next)=>{

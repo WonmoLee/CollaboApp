@@ -22,5 +22,5 @@ module.exports = (decodedUser, message)=>{
             .catch((error)=>{
                 return reject(error);
             });
-    })
+    });
 };

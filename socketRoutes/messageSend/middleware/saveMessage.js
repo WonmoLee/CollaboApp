@@ -10,7 +10,7 @@
 
 module.exports = (message, decodedUser)=>{
     const Message = require('../../../model/Message');
-    const message = new Message({
+    const messageObject = new Message({
         sender: decodedUser._id,
         message: message.message,
         room: message.room

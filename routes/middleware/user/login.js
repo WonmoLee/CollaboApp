@@ -71,7 +71,7 @@ exports.createJsonWebToken = (req, res, next)=>{
     });
 };
 
-exports.updateUserWithToekn = (req, res, next)=>{
+exports.updateUserWithToken = (req, res, next)=>{
     const OnError = (error)=>{
       return next(error);
     };
