@@ -9,6 +9,6 @@
  */
 'use strict';
 
-exports.TokenRefreshEmmit = require('./TokenRefreshEmmit');
-exports.SetSocketId = require('./SetSocketId');
-exports.JoinRooms = require('./JoinRooms');
+exports.TokenRefreshEmmit = require('./tokenRefreshEmmit');
+exports.SetSocketId = require('./setSocketId');
+exports.JoinRooms = require('./joinRooms');
