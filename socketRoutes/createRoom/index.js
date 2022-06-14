@@ -1,39 +1,39 @@
 /**
  * Author: wonmoLee 
- * Date: 2022.06.09
+ * Date: 2022.06.11
  * GitHub: https://github.com/wonmoLee
  * Blog: https://wonmolee.github.io
  * 
  * - Revision history -
  * 
  */
+'use strict';
 
-module.exports = (socket, event)=>{
-    const Verifier = require('../../util/Verifier');
-    const JWTVerifier = new Verifier();
+module.exports = (socket,event)=>{
+  const Verifier = require('../../util/Verifier');
+  const JWTVerifier = new Verifier();
 
-    const createRoom = require('./middleware/createRoom');
-    const pushRoomToUser = require('./middleware/pushRoomToUser');
-    const joinRoom = require('./middleware/joinRoom');
-    const sendSuccessAck = require('./middleware/sendSuccessAck');
-    const sendFailureAck = require('./middleware/sendFailureAck');
-
-    socket.on(event, (message, ack)=>{
-        JWTVerifier.verify(socket, message.token)
-            .then((decodedUser)=>{
-                return createRoom(decodedUser, message);
-            })
-            .then((result)=>{
-                return pushRoomToUser(result);
-            })
-            .then((result)=>{
-                return joinRoom(socket, result);
-            })
-            .then((result)=>{
-                return sendSuccessAck(result, message, ack);
-            })
-            .catch((error)=>{
-                return sendFailureAck(error, message, ack);
-            });
-    });
-};
+  const createRoom = require('./middleware/createRoom');
+  const pushRoomToUser = require('./middleware/pushRoomToUser');
+  const joinRoom = require('./middleware/joinRoom');
+  const sendSuccessAck = require('./middleware/sendSuccessAck');
+  const sendFailureAck = require('./middleware/sendFailureAck');
+  socket.on(event,(message,ack)=>{
+    JWTVerifier.verify(socket,message.token)
+      .then((decodedUser)=>{
+        return createRoom(decodedUser,message);
+      })
+      .then((result)=>{
+        return pushRoomToUser(result);
+      })
+      .then((result)=>{
+        return joinRoom(socket,result);
+      })
+      .then((result)=>{
+        return sendSuccessAck(result,message,ack);
+      })
+      .catch((error)=>{
+        return sendFailureAck(error,message,ack);
+      })
+  });
+}
